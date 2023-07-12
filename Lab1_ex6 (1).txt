@@ -1,0 +1,113 @@
+
+CREATE TABLE categories
+(
+    id_category NUMBER(5),
+    category VARCHAR2(30),
+    CONSTRAINT pk_categories PRIMARY KEY (id_category)
+);
+
+DESC categories;
+
+SELECT constraint_name from all_constraints WHERE table_name = 'CATEGORIES';
+
+CREATE TABLE songs
+(
+    id_song NUMBER(5),
+    id_category NUMBER(5),
+    id_album NUMBER(5),
+    title VARCHAR2(30),
+    length NUMBER(4),
+    content VARCHAR2(1000),
+    CONSTRAINT pk_songs PRIMARY KEY (id_song),
+    CONSTRAINT fk_songs_category FOREIGN KEY (id_category)
+    	REFERENCES categories(id_category)
+);
+
+DESC songs;
+
+SELECT constraint_name from all_constraints WHERE table_name = 'SONGS';
+
+CREATE TABLE albums
+(
+    id_album NUMBER(5),
+    title VARCHAR2(30),
+    year NUMBER(4),
+    id_band NUMBER(5),
+    CONSTRAINT pk_albums PRIMARY KEY (id_album)
+);
+
+DESC albums;
+
+SELECT constraint_name from all_constraints WHERE table_name = 'ALBUMS';
+
+ALTER TABLE songs
+    ADD CONSTRAINT fk_songs_album FOREIGN KEY(id_album)
+    	REFERENCES albums(id_album);
+
+SELECT constraint_name from all_constraints WHERE table_name = 'SONGS';
+
+
+CREATE TABLE composers
+(
+    id_song NUMBER(5),
+    id_artist NUMBER(5),
+    CONSTRAINT pk_composers PRIMARY KEY (id_song, id_artist),
+    CONSTRAINT fk_composers_songs FOREIGN KEY (id_song)
+    	REFERENCES songs(id_song)
+);
+
+DESC composers;
+
+SELECT constraint_name from all_constraints WHERE table_name = 'COMPOSERS';
+
+CREATE TABLE artists
+(
+    id_artist NUMBER(5),
+    id_band NUMBER(5),
+    firstname VARCHAR2(30),
+    lastname VARCHAR2(30),
+    date_of_birth DATE,
+    CONSTRAINT pk_artists PRIMARY KEY (id_artist)
+);
+
+
+
+DESC artists;
+
+ALTER TABLE composers
+ADD CONSTRAINT fk_composers_artists FOREIGN KEY(id_artist)
+    	REFERENCES artists(id_artist);
+
+CREATE TABLE bands(
+	id_band NUMBER(5),
+    name VARCHAR2(30),
+    CONSTRAINT pk_bands PRIMARY KEY (id_band)
+);
+
+ALTER TABLE artists ADD CONSTRAINT fk_artists_bands 
+    FOREIGN KEY (id_band) REFERENCES bands(id_band);
+    
+ALTER TABLE albums ADD CONSTRAINT fk_albums_bands 
+    FOREIGN KEY (id_band) REFERENCES bands(id_band);
+
+SELECT constraint_name from all_constraints WHERE table_name = 'ARTISTS';
+SELECT constraint_name from all_constraints WHERE table_name = 'ALBUMS';
+
+INSERT INTO categories(id_category, category)
+VALUES(1, 'JAZZ');
+
+INSERT INTO categories(id_category, category)
+VALUES(2, 'RAP');
+
+SELECT * FROM categories;
+
+INSERT INTO categories VALUES (3, 'HIP HOP');
+INSERT INTO categories (category, id_category) VALUES ('MANELE', 4);
+INSERT INTO categories (id_category) VALUES (5);
+INSERT INTO categories VALUES (6, NULL);
+INSERT INTO categories VALUES (6, 'Muzica populara');
+
+
+INSERT INTO songs (id_song, id_category, id_album) VALUES (6, 3, 1);
+SELECT * FROM songs;
+

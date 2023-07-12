@@ -1,0 +1,1451 @@
+--LABORATOR 4
+--Ex. 3. Să se selecteze toate înregistrările și toate coloanele din tabela angajați
+select * from angajati;
+
+--Ex. 4. Să se selecteze id-ul și numele departamentului din tabela departamente.
+select id_dep, den_dep
+from departamente;
+
+--Ex. 5. Să se selecteze id-ul, numele, funcția și data angajării pentru toți angajații din firmă, ordonați descrescător în funcție de id. Concatenați id-ul cu numele.
+
+select
+	id_ang||'-'||nume as angajat,
+	functie,
+	data_ang
+from angajati
+order by id_ang desc;
+
+--Ex. 6. Să se selecteze id-ul, numele, funcția și venitul lunar pentru toți angajații din firmă. Să se adauge la select o coloană goală care să se numească semnătura. Concatenați id-ul cu numele. Ordonați după departament.
+select
+	id_ang||'-'||nume as angajat,
+	functie,
+	salariu+nvl(comision, 0) as "venit lunar",
+	'       ' as semnatura
+from angajati
+order by id_dep;
+
+
+--Ex. 7. Să se selecteze numele și funcția angajaților.
+select nume, 'cu functie', functie
+from angajati;
+
+--Ex. 8. Să se facă o listă cu numele departamentului și codul acestuia. Ordonați după numele departamentului.
+select
+	den_dep||' are codul '||id_dep "Lista departamente"
+from departamente
+order by den_dep asc;
+
+--Ex. 9. Să se listeze toți angajații din departamentul 10.
+select
+	a.id_ang as ecuson,
+	a.nume,
+	a.data_ang as "data angajarii",
+	a.salariu
+from angajati a
+where id_dep = 10;
+
+--Ex. 10. Să se selecteze toți angajații care au funcția MANAGER. Ordonați după id-ul departamentului.
+select
+	id_dep as "Nr. departament",
+	nume,
+	functie,
+	salariu,
+	data_ang as "data angajarii"
+from angajati
+where LOWER(FUNCTIE) = 'manager'
+order by id_dep;
+
+--Ex. 11. Selectați toate persoanele care s-au angajat intr-o anumită perioadă.
+-- metoda 1
+select
+    id_dep departament,
+	functie,
+	nume,
+	data_ang as "data angajarii"
+from angajati
+where data_ang between '1-MAY-1981' and '31-DEC-1981'
+order by 1, 2 desc;
+
+-- metoda 2
+select
+    id_dep departament,
+	functie,
+	nume,
+	data_ang as "data angajarii"
+from angajati
+where data_ang >= '1-MAY-1981' and data_ang <= '31-DEC-1981'
+order by 1, 2 desc;
+
+--Ex. 12. Să se listeze id-ul, numele, funcția, venitul lunar pentru angajații care au următoarele id-uri: 7499,7902, 7876.
+-- metoda 1
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	salariu + nvl(comision, 0) as "Venit lunar"
+from angajati
+where id_ang in (7499, 7902, 7876)
+order by nume;
+
+-- metoda 2
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	salariu + nvl(comision, 0) as "Venit lunar"
+from angajati
+where id_ang = 7499 or id_ang = 7902 or id_ang = 7876
+order by nume;
+
+--Ex. 13. Să se selecteze toate persoanele care au fost angajate în anul 1980.
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	data_ang as "data angajarii"
+from angajati
+where data_ang like '%80';
+
+--Ex. 14. Să se selecteze toate persoanele al căror nume începe cu litera F și numele funcției are 7 caractere.
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	data_ang as "data angajarii"
+from angajati
+where nume like 'F%' and functie LIKE '_______';
+
+--Ex. 15. Să se listeze angajații din departamentul 20 care nu au primit comision.
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	salariu,
+	comision
+from angajati
+where
+	(comision = 0 or comision is NULL) and
+	id_dep = 20
+order by nume;
+
+--Ex. 16. Să se listeze angajații care au primit comision și au funcția SALESMAN
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	salariu,
+	comision
+from angajati
+where
+	(comision != 0 and comision is not null) and
+	UPPER(functie) = 'SALESMAN'
+order by nume;
+
+--Ex. 17. Să se selecteze toți angajații care au funcția MANAGER și salariul peste 1500, și toți angajații care au funcția ANALYST.
+select
+	id_ang as ecuson,
+	nume,
+	functie,
+	salariu,
+	id_dep as departament
+from angajati
+where
+	(UPPER(functie) = 'MANAGER' and salariu > 1500) or
+	(UPPER(functie) = 'ANALYST')
+order by functie, nume desc;
+
+
+-- exercitii
+--1.Selectați toți angajații care s-au angajat înainte de anul 1982 și nu au primit comision.
+select
+	id_ang as ecuson,
+	nume,
+    salariu,
+    comision,
+	data_ang as "data angajarii"
+from angajati
+where data_ang < '1-JAN-1982' and (comision is null or comision = 0)
+order by data_ang asc;
+
+--2.Selectați toți angajații care au salariul peste 3000 și nu au șefi, ordonați după departament.
+select
+	id_ang as ecuson,
+	nume,
+	salariu,
+	id_sef
+from angajati
+where salariu > 3000 and id_sef is null
+order by nume asc;
+
+--3.Selectați numele, funcția și venitul anual al angajaților care nu au funcția MANAGER pentru un departament introdus de la tastatură.
+select
+	nume,
+	functie,
+    12 * (salariu + nvl(comision, 0)) as "venit anual"
+from angajati
+where LOWER(functie) != 'manager' and id_dep = &id_dep
+order by nume desc;
+
+--4.Selectați departamentul, numele, data angajării și salariul tuturor persoanelor angajate în anul 1981 din două departamente care se introduc de la tastatură.
+select
+	nume,
+	data_ang,
+	salariu,
+from angajati
+where data_ang like '__-___-81' and (id_dep = &dep1 or id_dep = &dep2)
+order by data_ang asc;
+
+
+
+
+
+
+
+
+--LABORATOR 5
+--Ex. 1 Să se facă un Cross Join pe tabele angajati si departamente pentru angajații care au funcția ANALYST. Să se selecteze numele angajatului, funcția acestuia și numele departamentului.
+--m1
+select nume, functie, den_dep
+from angajati, departamente
+where functie = 'ANALYST';
+
+--m2
+select nume, functie, den_dep
+from angajati
+	cross join departamente
+where functie = 'ANALYST';
+
+--Ex. 2. Să se selecteze id-ul departamentului, numele departamentului, numele și funcția pentru toți angajații care lucrează în departmanentul 10.
+--m1
+select d.id_Dep, d.den_dep, a.nume, a.functie
+from angajati a, departamente d
+where a.id_dep = d.id_dep and a.id_dep = 10;
+
+--m2
+select d.id_Dep, d.den_dep, a.nume, a.functie
+from angajati a
+    inner join departamente d -- inner era optional
+    	on a.id_dep = d.id_dep
+where a.id_dep = 10;
+
+--m3
+select id_Dep, d.den_dep, a.nume, a.functie
+from angajati a
+    inner join departamente d -- inner era optional
+    	using (id_dep)
+where id_dep = 10;
+
+
+Ex. 3. Să se rezolve exercițiul 2 folosind Natural Join.
+select id_Dep, d.den_dep, a.nume, a.functie
+from angajati a
+    natural join departamente d
+where id_dep = 10;
+
+--Ex. 4. Să se listeze numele, salariul și gradul de salarizare pentru angajații din departamentul 20. Când una sau mai multe tabele care nu au coloane comune, sau operatorul folosit nu este egal și trebuie să corelăm tabelele, avem un NON EQUI-JOIN.
+--m1
+select a.nume, a.salariu, g.grad
+from angajati a, grila_salariu g
+where
+	a.salariu between g.nivel_inf and g.nivel_sup
+	and id_dep = 20;
+
+--m2
+select a.nume, a.salariu, g.grad
+from angajati a
+	inner join grila_salariu g
+		on a.salariu between g.nivel_inf and g.nivel_sup
+where id_dep = 20;
+
+
+--Ex. 5. Să se listeze numele, salariul, gradul de salarizare și numele departamentului pentru angajații din departamentul 20.
+--m1
+select a.nume, a.salariu, g.grad, d.den_dep
+from angajati a, grila_salariu g, departamente d
+where a.id_dep = d.id_dep and (a.salariu between g.nivel_inf and g.nivel_sup) and a.id_dep = 20;
+
+--m2
+select a.nume, a.salariu, g.grad, d.den_dep
+from angajati a
+	inner join departamente d
+		on a.id_dep = d.id_dep
+	inner join grila_salariu g
+		on a.salariu between g.nivel_inf and g.nivel_sup
+where a.id_dep = 20;
+
+--m3
+select a.nume, a.salariu, g.grad, d.den_dep
+from angajati a
+    inner join grila_salariu g
+		on a.salariu between g.nivel_inf and g.nivel_sup
+	inner join departamente d
+		on a.id_dep = d.id_dep
+where a.id_dep = 20;
+
+
+--6 -> self join
+-- Ex. 6. Să se listeze numele, funcția, numele șefului și funcția sefului pentru angajații din departamentul 10.
+--m1
+select a1.nume as nume_ang, a1.functie as func_ang, a2.nume as nume_sef, a2.functie as func_sef
+from angajati a1, angajati a2
+where a1.id_sef = a2.id_ang;
+
+--m2
+select a1.nume as nume_ang, a1.functie as func_ang, a2.nume as nume_sef, a2.functie as func_sef
+from angajati a1
+    inner join
+    	angajati a2
+			on a1.id_sef = a2.id_ang;
+
+
+--Ex. 7. Să se selecteze toate departamentele și angajații care fac parte din fiecare departament. Să se ordoneze crescător după id-ul departamentului.
+--m1
+select d.id_dep, d.den_dep, a.nume, a.functie
+from departamente d, angajati a
+where d.id_dep = a.id_dep (+);
+
+--m2
+select d.id_dep, d.den_dep, a.nume, a.functie
+from departamente d
+	left outer join angajati a
+		on d.id_dep = a.id_dep;
+
+
+--Ex. 9. Să se afișeze numele, funcția, salariul si gradul de salarizare pentru toți angajații , după ce se li se dublează salariul.
+select a.nume, a.functie, a.salariu, g.grad
+from grila_salariu g
+	full outer join angajati a
+		on a.salariu * 2 between g.nivel_inf and g.nivel_sup;
+
+
+--Ex. 10. Să se selecteze numele de departament, numele, salariu si gradul de salariu pentru angajații din firmă, după ce salariile se dublează. Să se afișeze și numele departamentelor care nu au angajați și gradele care nu corespund niciunui salariu dublat.
+select a.nume, a.salariu, g.grad
+from grila_salariu g
+	full outer join angajati a
+		right outer join departamente d
+			on a.id_dep = d.id_dep
+		on a.salariu * 2 between g.nivel_inf and g.nivel_sup
+order by d.den_dep, a.nume, g.grad;
+
+--m2
+select d.den_dep, a.nume, a.salariu, g.grad
+from angajati a
+	full outer join grila_salariu g
+		on a.salariu * 2 between g.nivel_inf and g.nivel_sup
+	full outer join departamente d
+		on a.id_dep = d.id_dep;
+
+--Ex. 11. Să se listeze angajații din departamentele 10 și 30.
+select id_dep, nume, functie, salariu
+from angajati
+where id_dep = 10
+union
+select id_dep, nume, functie, salariu
+from angajati
+where id_dep = 30;
+
+--------- LA UNION TOATE COLOANELE AU ACELASI NUME
+--Ex. 12. Să se construiască o cerere care reunește pe aceeași coloană salariile angajațiilor din departamentul 10 și comisionale celor din departamentul 30.
+select id_dep, nume, 'are salariul' are, salariu sal_com
+from angajati
+where id_dep = 10
+union
+select id_dep, nume, 'are comisionul' are, salariu sal_com
+from angajati
+where id_dep = 30;
+
+--Ex. 13. Să se selecteze toate funcțiile din departamentul 10 și 20.
+select functie from angajati where id_dep = 10
+union all
+select functie from angajati where id_dep = 30;
+
+--Ex. 14. Să se selecteze funcțiile care au primit același comision și se regăsesc în departamentele 10, 20,30.
+select functie, nvl(comision, 0) comision from angajati where id_dep = 10
+intersect
+select functie, nvl(comision, 0) comision from angajati where id_dep = 20
+intersect
+select functie, nvl(comision, 0) comision from angajati where id_dep = 30;
+
+--Ex. 15. Să se selecteze funcțiile care se găsesc în departamentul 10 dar nu se regăsesc în departamentul 30.
+select functie from angajati where id_dep = 10
+minus
+select functie from angajati where id_dep = 30;
+
+
+-- Să se facă o listă cu: ...
+--Sa se afiseze toate rezutlatele, chiar daca nu se gasesc legaturi de JOIN intre intregistrarile din diferitele tabele.
+select
+	a.nume as nume_ang,
+	d.den_dep as dep_ang,
+	g.grad as grad_ang,
+	s.nume as nume_sef,
+	ds.den_dep as dep_sef,
+	gs.grad as grad_sef
+from angajati a
+	full outer join departamente d
+		on a.id_dep = d.id_dep
+	full outer join grila_salariu g
+		on a.salariu between g.nivel_inf and g.nivel_sup
+	left outer join angajati s -- pt ca angajatul care are sef sa NU dispara
+		on a.id_sef = s.id_ang
+	full outer join departamente ds
+    	on s.id_dep = ds.id_dep
+	full outer join grila_salariu gs
+		on s.salariu between gs.nivel_inf and gs.nivel_sup;
+	
+
+-- rez 1: Sa se scrie o cerere sql care face o lista de premiere  pentru analistii si vanzatorii care nu au primit comision. Analistii primesc o prima de 20% din salariul propriu, iar vanzatorii primesc o prima de 10% din salariu propriu Antetul listei este denumire departament, nume, job, comision, salariu si prima. Sa se rezolve folosind cel putin 2 metode distincte de join.
+
+select d.den_dep as departament, a.nume, a.functie as job, a.comision, a.salariu, 0.2*a.salariu as prima
+from angajati a, departamente d
+where a.id_dep = d.id_dep(+) and (a.comision = 0 or a.comision is NULL) and (LOWER(a.functie) = 'analyst' or LOWER(a.functie) = 'salesman');
+
+select d.den_dep as departament, a.nume, a.functie as job, a.comision, a.salariu, 0.2*a.salariu as prima
+from angajati a
+    left join departamente d
+    	on a.id_dep = d.id_dep	
+where (a.comision = 0 or a.comision is NULL) and (LOWER(a.functie) = 'analyst' or LOWER(a.functie) = 'salesman');
+
+
+
+
+-- rez 2: sa se scrie o cerere sql care face o lista cu toti sefii de departamente care au subalterni in alt departament si subalternii au salariul mai mare decat jumatate din salariul sefului; coloanele sunt: den_dep_sef, nume_Sef, sal_sef, nume_subalt, salariu_subalt
+
+select d1.den_dep as den_dep_sef, s.nume as nume_sef, s.salariu as sal_sef, a.nume as nume_subalt, a.salariu as salariu_subalt, d2.den_dep as den_dep_subalt
+from angajati s, angajati a, departamente d1, departamente d2
+where s.id_dep = d1.id_dep and a.id_dep = d2.id_dep and a.id_dep != s.id_dep and a.salariu > (s.salariu / 2) and a.id_sef = s.id_ang
+order by 1, 2;
+
+select d1.den_dep as den_dep_sef, s.nume as nume_sef, s.salariu as sal_sef, a.nume as nume_subalt, a.salariu as salariu_subalt, d2.den_dep as den_dep_subalt
+from angajati s
+	inner join angajati a
+		on a.id_dep != s.id_dep and a.salariu > (s.salariu / 2) and a.id_sef = s.id_ang
+	inner join departamente d1
+		on s.id_dep = d1.id_dep
+	inner join departamente d2
+		on a.id_dep = d2.id_dep
+order by 1, 2;
+
+
+
+-- rez3:sa se selecteze, pentru fiecare angajat, care nu face parte din departamentul lui Blake si care castiga un venit mai mare decat seful sau:numele, denumirea departamentului din care face parte, venitul sau, numele sefului sau si diferenta veniturilor dintre angajatul respectiv si seful sau.
+select
+	a1.nume as nume_ang,
+	d.den_dep as denumire_dep,
+	a1.salariu + nvl(a1.comision, 0) as venit_ang,
+	a2.nume as nume_sef,
+    a2.salariu + nvl(a2.comision, 0) as venit_sef,
+	(a1.salariu + nvl(a1.comision, 0)) - a2.salariu + nvl(a2.comision, 0) as diferenta
+from angajati a1
+	inner join angajati a2
+		on a1.id_sef = a2.id_ang
+	inner join departamente d
+		on d.id_dep = a1.id_dep
+    inner join angajati a3
+    	on a3.id_dep != a1.id_dep
+where (a1.salariu + nvl(a1.comision, 0)) > a2.salariu + nvl(a2.comision, 0) and LOWER(a3.nume) = 'blake';
+
+
+-- sau
+SELECT
+		a1.nume "nume angajat",
+		d1.den_dep "denumire dep",
+		a1.salariu + nvl(a1.comision, 0) "venit",
+		a2.nume "nume sef",
+		(a1.salariu + nvl(a1.comision, 0)) - (a2.salariu + nvl(a2.comision, 0)) "diferenta"
+	FROM
+		angajati a1,
+		angajati a2,
+		departamente d1,
+    	angajati a3
+	WHERE
+		a1.id_sef = a2.id_ang
+		AND a1.salariu + nvl(a1.comision, 0) > a2.salariu + nvl(a2.comision, 0)
+		AND a1.id_dep != 30
+		AND a1.id_dep = a2.id_dep
+		and d1.id_dep = a1.id_dep
+		and LOWER(a3.nume) = 'blake' and a3.id_dep != a1.id_dep;
+
+
+
+
+--LABORATOR 6
+-- functii numerice
+-- -1
+select SIGN(-12) from dual;
+
+-- 12
+select ABS(-12) from dual;
+
+-- 15
+SELECT CEIL(14.2) from dual;
+
+-- PI
+DEPINE pi = '(select asin(1)*2 from dual)';
+
+-- 0.5
+select SIN(30*&pi/180) sin from dual;
+
+-- 0.5
+select COS(60*&pi/180) cos from dual;
+
+-- -1
+select TAN(135*&pi/180) tan from dual;
+
+-- 1.175..
+select SINH(1) sinh from dual;
+
+-- 1
+select COSH(0) cosh from dual;
+
+-- 0.46..
+select TANH(0.5) tanh from dual;
+
+-- 0.52..
+select ASIN(0.5) asin from dual;
+
+-- 1.57..
+select ACOS(0) acos from dual;
+
+-- 0.78..
+select atan(1) atan from dual;
+
+-- 54.59..
+select EXP(4) exp from dual;
+
+-- 9
+select POWER(3, 2) power from dual;
+
+-- 3
+select SQRT(9) sqrt from dual;
+
+-- 4.55..
+select ln(95) ln from dual;
+
+-- 2
+select log(10, 100) log from dual;
+
+--4
+select mod(14, 5) mod from dual;
+
+-- 15.2
+select round (15.193, 1) from dual;
+
+-- 15
+select round (15.193) from dual;
+
+-- 2000 !!!!!!!!!!!!!!!!!!!
+select round (1673.19, -3) from dual;
+
+-- 20 !!!!!!!!!!!!!!!!!!!
+select round (15.193, -1) from dual;
+
+-- 15.1
+select trunc(15.193, 1) from dual;
+
+-- 15
+select trunc(15.193) from dual;
+
+-- 10
+select trunc(15.193, -1) from dual;
+
+-- 100
+select trunc(156.193, -2) from dual;
+
+
+
+-- functii siruri caractere
+-- k
+select chr(75) from dual;
+
+-- KING este president
+select concat(concat(nume, ' este '), functie) ANF_FUNC
+from angajati
+where id_ang = 7839;
+
+-- King
+select INITCAP(nume) ex_initcap
+from angajati
+where id_ang = 7839;
+
+-- BLACK si BLUE
+select REPLACE('JACK si JUE', 'J', 'BL') EX_REPLACE
+from dual;
+
+-- CLARK*****, KING******, ...
+select RPAD(nume, 10, '*') EX_RPAD
+from angajati where id_dep = 10;
+
+-- *****CLARK...
+select LPAD(nume, 10, '*') EX_LPAD
+from angajati where id_dep = 10;
+
+-- Pope
+select RTRIM('Popescu', 'scu') from dual;
+
+-- ope
+select SUBSTR('Popescu', 2, 3) from dual;
+
+--7
+select INSTR('Protopopescu', 'op', 3, 2) from dual;
+
+-- 7
+select LENGTH('analyst') from dual;
+
+-- am inlocuit O cu spatiu si m cu p -> ana are pere
+select TRANSLATE('Oana are mere', 'Om', ' p') from dual;
+
+
+
+-- functii calendaristice
+select nume, data_ang, ADD_MONTHS(data_ang, 3) data_mod
+from angajati
+where id_dep = 10;
+
+select nume, data_ang, LAST_DAY(data_ang) ultima_zi
+from angajati
+where id_dep = 10;
+
+select NEXT_DAY('24-MAR-2014', 'MONDAY') urmatoarea_luni
+from dual;
+
+select nume, data_ang,
+MONTHS_BETWEEN('01-JAN-2014', data_ang) luni_vechime1,
+MONTHS_BETWEEN(data_ang, '01-JAN-2014') luni_vechine2
+from angajati
+where id_dep = 10;
+
+select data_ang, ROUND(data_ang, 'YEAR') rot_an
+from angajati
+where id_ang = 7369;
+
+select data_ang, TRUNC(data_ang, 'YEAR') rot_an
+from angajati
+where id_ang = 7369;
+
+select data_ang, TRUNC(data_ang, 'MONTH') rot_luna
+from angajati
+where id_ang = 7369;
+
+select SYSDATE from dual;
+
+select EXTRACT(DAY from sysdate) from dual;
+
+select EXTRACT(MONTH from sysdate) from dual;
+
+select EXTRACT(YEAR from sysdate) from dual;
+
+
+select data_ang, data_ang + 7, data_ang - 7, sysdate - data_ang
+from angajati
+where data_ang like '%JUN%';
+
+-- ex individual
+-- Pentru angajatii ce au numele de lungime 4, faceti o lista cu:
+--numele angajatului scris cu litere mari
+--ziua in care s-au angajat
+--denumirea departamentului in care lucreaza scrisa cu litere mici
+--initiala numelui sefului
+SELECT UPPER(a.nume) nume_cu_majuscule, a.data_ang, LOWER(d.den_dep) as den_dep, SUBSTR(s.nume, 0, 1) as init_sef
+FROM angajati a, departamente d, angajati s
+WHERE LENGTH(a.nume) = 4 AND a.id_dep = d.id_dep AND a.id_sef = s.id_ang(+);
+
+
+sau 
+
+
+select upper(a.nume) as nume_ang, a.data_ang, lower(d.den_dep) as den_dep, substr(s.nume, 0, 1) as init_sef
+from angajati a
+	left join angajati s
+    	on a.id_sef = s.id_ang
+	join departamente d on a.id_dep = d.id_dep
+where length(a.nume) = 4;
+
+
+--LABORATOR 7
+
+select to_char(sysdate, 'DD-MM-YYYY') data_curenta from dual;
+
+select to_date('15112005', 'DD-MM-YYYY') data_curenta from dual;
+
+select to_char(-10000, '$999999.99MI') val from dual;
+
+select to_number('$10000.00-', '$999999.99MI') val from dual;
+
+--Să se selecteze toți angajații care au venit în firmă în 1982
+select nume, to_char(data_ang, 'dd-mm-yyyy') data_ang
+from angajati
+where to_char(data_ang, 'YYYY') like '1982';
+
+select nume, to_char(data_ang, 'dd-mm-yyyy') data_ang
+from angajati
+where to_date(to_char(data_ang, 'yyyy'), 'yyyy') = to_date(to_char(1982), 'yyyy');
+
+select nume, to_char(data_ang, 'dd-mm-yyyy') data_ang
+from angajati
+where to_number(to_char(data_ang, 'yyyy')) = 1982;
+
+---- nr de 9 determina lungimea de afisare
+-- 123
+column numar format 99999
+select 123.14 numar from dual;
+
+-- 123.14
+column numar format 999.99
+select 123.14 numar from dual;
+
+--$123.14
+column numar format $999.99
+select 123.14 numar from dual;
+
+--00123.14 si 00000.14
+column numar format 00999.99
+select 123.14 numar from dual;
+select 0.14 numar from dual;
+
+--123.14 si 0.14
+column numar format 9990.99
+select 123.14 numar from dual;
+select 0.14 numar from dual;
+
+-- 00123.14 si 00000.14
+column numar format 09990.99
+select 123.14 numar from dual;
+select 0.14 numar from dual;
+
+-- 123,123,123,123.14
+column numar format 999,999,999.99
+select 123.14 numar from dual;
+
+-- 123.14-
+column numar format 999.99MI
+select 123.14 numar from dual;
+
+-- <123.14> si 123.14
+column numar format 999.99PR
+select -123.14 numar from dual;
+select 123.14 numar from dual;
+
+--1.23E+02
+column numar format 999.99EEEE
+select 123.14 numar from dual;
+
+--123.00
+column numar format B99999.99
+select 123 numar from dual;
+
+-- .14 si 123.10
+column numar format 99999D00
+select 0.14 numar from dual;
+select 123.1 numar from dual;
+
+
+select greatest(23, 14, 66, 35, 90) gr from dual;
+select least(23, 14, 66, 35, 90) gr from dual;
+select greatest('15-JUN-1968', '23-IAN-2005') gr from dual;
+select least('15-JUN-1968', '23-IAN-2005') gr from dual;
+
+
+-- un fel de if then else!!!!
+-- Să se calculeze o primă în funcție de vechime pentru angajații din departamentul 20.
+select nume, functie, salariu,
+decode(functie, 'MANAGER', salariu*1.5,
+    'ANALYST', salariu*1.24,
+    salariu/4) prima
+from angajati
+where id_dep = 20
+order by functie;
+
+select nume, functie, salariu, to_char(data_ang, 'yyyy') data_ang,
+decode(sign(data_ang - to_date('1-JAN-1982')),
+    -1, salariu * 1.25,
+    salariu * 1.10) prima
+from angajati
+where id_dep = 20
+order by functie;
+
+
+select
+	case lower(sediu)
+		when 'new york' then 1
+		when 'dallas' then 2
+		when 'chicago' then 3
+		when 'boston' then 4
+	end cod_dep
+from departamente;
+
+select
+	case
+		when lower(sediu) = 'new york' then 1
+		when id_dep = 20 or lower(sediu) = 'dallas' then 2
+		when lower(sediu) = 'chicago' then 3
+		when id_dep = 40 then 4
+		else 5
+	end cod_dep
+from departamente;
+
+select nume, functie
+from angajati
+where id_ang = (case functie
+    	when 'SALESMAN' then 7844
+    	when 'CLERK' then 7900
+    	when 'ANALYST' then 7902
+    	else 7839
+    end);
+
+select nume, functie
+from angajati
+where id_ang = (case
+    	when functie = 'SALESMAN' then 7844
+    	when functie = 'CLERK' then 7900
+    	when functie = 'ANALYST' then 7902
+    	else 7839
+    end);
+
+select nume, comision, NVL(comision, 0) nvl_comision,
+	salariu + comision "sal + com",
+	salariu + nvl(comision, 0) "sal + nvl com"
+from angajati
+where id_dep = 30;
+
+-- Afișați media salariilor pentru toate valorile din tabel, iar apoi doar pentru
+--salariile distincte. Rezultatul este diferit deoarece există salarii duplicate.
+select avg(salariu) salariu from angajati;
+select avg(all salariu) salariu from angajati;
+select avg(distinct salariu) salariu from angajati;
+
+--Să se calculeze salariul mediu pentru fiecare departament.
+select id_dep, avg(salariu) from angajati
+group by id_dep
+order by 1;
+
+--Să se calculeze venitul lunar mediu pentru fiecare departament. Afișati 
+--id_dep și venitul lunar doar pentru departamentele care au venitul lunar
+--mediu mai mare de 2000.
+--Pentru a aplica o condiție bazată pe funcții de agregare, folosim HAVING în loc de WHERE.
+select id_dep, avg(salariu + nvl(comision, 0))
+from angajati
+group by id_dep
+having avg(salariu + nvl(comision, 0)) > 2000;
+
+--Să se afișeze numărul angajatilor care au primit salariu pentru fiecare departament.
+select id_dep, count(*) nr_ang, count (salariu) count,
+	count(all salariu) count_all,
+	count(distinct salariu) count_distinct
+from angajati
+group by id_dep
+order by 1;
+
+-- Să se afișeze departamentele care au cel puțin două funcții distincte pentru angajați.
+select id_dep, count(functie) count, count(distinct functie) count_distinct
+from angajati
+group by id_dep
+having count(distinct functie) >= 2
+order by 1;
+
+-- Să se afișeze salariul minim, maxim și suma slariilor pentru fiecare departament.
+SELECT d.den_dep,
+       MIN(a.salariu) AS sal_minim,
+       MIN(DISTINCT a.salariu) AS sal_min_d,
+       MAX(a.salariu) AS sal_max,
+       MAX(DISTINCT a.salariu) AS sal_max_d,
+       SUM(a.salariu) AS sal_sum,
+       SUM(DISTINCT a.salariu) AS sal_sum_d
+FROM angajati a
+NATURAL JOIN departamente d
+GROUP BY d.den_dep
+ORDER BY d.den_dep;
+
+--Să se afișeze varianția standard și deviația 
+--standard a salariilor pentru fiecare departament.
+SELECT id_dep,
+       variance(salariu) AS sal_varstd,
+       variance(DISTINCT salariu) AS sal_varstd_d,
+       stddev(salariu) AS sal_devstd,
+       stddev(DISTINCT salariu) AS sal_devstd_d,
+       stddev(comision) AS com_devstd
+FROM angajati a
+GROUP BY id_dep
+ORDER BY 1;
+
+
+
+
+-- ex 1
+select s.id_ang id_sef,
+    s.nume nume_sef,
+    d.den_dep,
+    COUNT(distinct sub.id_ang) as nr_subalt,
+	AVG(sub.salariu) as sal_mediu,
+    MIN(sub.salariu) as sal_min,
+	MAX(sub.salariu) as sal_max
+from angajati s
+	join departamente d on s.id_dep = d.id_dep
+	join angajati sub on sub.id_sef = s.id_ang
+group by s.id_ang, s.nume, d.den_dep;
+
+
+select s.id_ang id_sef,
+    s.nume nume_sef,
+    d.den_dep,
+    COUNT(distinct sub.id_ang) as nr_subalt,
+	AVG(sub.salariu) as sal_mediu,
+    MIN(sub.salariu) as sal_min,
+	MAX(sub.salariu) as sal_max
+from angajati s, angajati sub, departamente d
+where sub.id_sef = s.id_ang and d.id_dep = s.id_dep
+group by s.id_ang, s.nume, d.den_dep;
+
+
+--2
+select
+    INITCAP(a.nume) as nume_ang,
+	lower(d.den_dep) as dep_ang,
+	to_char(a.data_ang, 'mm-yyyy') as data_ang,
+	g.grad as grad_ang,
+	initcap(s.nume) as nume_sef,
+	lower(ds.den_dep) as dep_sef,
+    case
+    	when g.grad = 2 and to_char(a.data_ang, 'yyyy') = to_char(s.data_ang, 'yyyy') then a.salariu * sqrt(0.15 * log(2, months_between(sysdate,  a.data_ang)))
+    	when g.grad = 2 and to_char(a.data_ang, 'yyyy') = to_char(s.data_ang, 'yyyy') then a.salariu * sqrt(0.15 * log(3, months_between(sysdate,  a.data_ang)))
+		else 0
+    end as prima
+    from angajati a
+	join angajati s on a.id_sef = s.id_ang
+	join departamente d on a.id_dep = d.id_dep
+	join departamente ds on s.id_dep = ds.id_dep
+	join grila_salariu g on a.salariu between g.nivel_inf and g.nivel_sup;
+
+	
+
+
+
+
+
+
+-- Sa se afiseze, pt toti angajatii din departamentul research o lista care sa contina o apreciere a vechimii angajatului precum si numarul de subordonati direct ai angajatului respectiv. Aprecierea vechimii si va face astfel:
+-- - daca au venit in firma inainte de 31-DEC-1980 -> vechime = FOARTE VECHI
+-- - daca au venit in firma intre 1981 si 1986 -> vechime = VECHI
+-- - daca au venit in firma dupa 1986 -> vechime = RECENT
+-- List va afisa si angajatii care nu au subordonati.
+
+-- Coloane lista: nume angajati, salariu, apreciere vechime si numar subordonati.
+
+------- subiect
+SELECT a.nume AS "nume angajat",
+       a.salariu AS "salariu",
+       CASE
+           WHEN a.data_ang < to_date('31121980', 'DD-MM-YYYY') THEN 'FOARTE VECHI'
+           WHEN a.data_ang BETWEEN to_date('01011981', 'DD-MM-YYYY') AND to_date('31121986', 'DD-MM-YYYY') THEN 'VECHI'
+           ELSE 'RECENT'
+       END AS "apreciere vechime",
+       (SELECT COUNT(*)
+        FROM angajati s
+        WHERE s.id_sef = a.id_ang) AS "numar subordonati"
+FROM angajati a
+FULL OUTER JOIN departamente d ON a.id_dep = d.id_dep
+WHERE d.den_dep = 'RESEARCH';
+
+
+--sau
+
+SELECT 
+	a.nume,
+	a.salariu+nvl(a.comision,0) salariu,
+CASE
+	WHEN to_number(to_char(a.data_ang, 'yyyy')) < 1981 THEN 'FOARTE_VECHI'
+	WHEN to_number(to_char(a.data_ang, 'yyyy')) BETWEEN 1981 AND 1986 THEN 'VECHI'
+	WHEN to_number(to_char(a.data_ang, 'yyyy')) > 1986 THEN 'RECENT'
+ELSE 'ALTCEVA'
+end apreciere_vechime,
+count(distinct sub.nume) nr_subordonati
+from angajati a
+	left outer join angajati sub on sub.id_sef = a.id_ang
+	join departamente d on d.den_dep = 'RESEARCH' AND d.id_dep = a.id_dep
+group by a.nume, a.salariu, a.comision, a.data_ang;
+
+
+--- subiect
+-- lista de premiere a angajatilor
+select d.den_dep, a.nume, a.functie, a.comision,
+	case
+    when nvl(a.comision, 0) != 0 and a.functie != 'PRESIDENT' and a.functie != 'MANAGER' then avg(a.salariu)
+	when nvl(a.comision, 0) = 0 and a.functie != 'PRESIDENT' and a.functie != 'MANAGER' then min(a.salariu)
+	else 0
+	end prima
+from angajati a
+join departamente d on d.id_dep = a.id_dep
+group by a.nume, a.functie, d.den_dep, a.comision;
+
+-- sau 
+
+SELECT d.den_dep, a.nume, a.functie, a.comision,
+    CASE 
+		WHEN nvl(a.comision, 0) <> 0 AND a.functie <> 'PRESIDENT' AND a.functie <> 'MANAGER' THEN AVG(a.salariu)
+    	WHEN nvl(a.comision, 0) = 0 AND a.functie <> 'PRESIDENT' AND a.functie <> 'MANAGER' THEN MIN(a.salariu)
+    ELSE 0
+    END prima
+FROM angajati a 
+INNER JOIN departamente d ON a.id_dep = d.id_dep 
+GROUP BY a.nume, a.functie, d.den_dep, a.comision;
+
+
+
+
+--
+sa se scrie o cerere care face o lista de premiere a angajatilor aplicand urmatoarele criterii:
+a) angajatii care au primit comision primesc o prima egala cu salariul mediu pe companie
+b) angajatii care nu au primit comision primesc o prima egala cu salariul minim pe companie
+c) presedintele si managerii primesc o prima egala cu salariul maxim pe companie
+denumire departament, 
+nume angajat, 
+functie,
+comision,
+prima ---- se afiseaza fara zecimale
+
+select
+    d.den_dep,
+    a.nume, 
+    a.functie, 
+    a.comision,
+	case
+    when nvl(a.comision, 0) != 0 and a.functie != 'PRESIDENT' and a.functie != 'MANAGER' then trunc(avg(a2.salariu), 0)
+	when nvl(a.comision, 0) = 0 and a.functie != 'PRESIDENT' and a.functie != 'MANAGER' then trunc(min(a2.salariu), 0)
+    when a.functie = 'PRESIDENT' and a.functie = 'MANAGER' then trunc(min(a.salariu), 0)
+	else 0
+	end prima
+from angajati a, departamente d, angajati a2
+where d.id_dep = a.id_dep
+group by a.nume, a.functie, d.den_dep, a.comision;
+
+
+-- LABORATOR 8
+--Subcereri necorelate în clauza WHERE
+-- Subcereri necorelate care întorc o valoare în clauza WHERE
+-- Ex. 1. Să se selecteze angajatul cu cel mai mare salariu din firmă.
+SELECT id_dep, nume, functie, salariu
+FROM angajati
+WHERE salariu = (SELECT max(salariu)
+    				from angajati);
+
+-- Subcereri necorelate care întorc o coloană în clauza WHERE
+-- Ex. 2. Să se selecteze angajații care au funcții similare funcțiilor din departamentul 20 și nu lucrează în acest departament.
+select id_dep, nume, functie, salariu
+from angajati
+where
+	not id_dep = 20 and
+	functie in (select functie
+    				from angajati where id_dep = 20)
+order by functie;
+
+-- Ex. 3. Să se selecteze angajații care nu s-au angajat în lunile decembrie, ianuarie și februarie.
+select nume, functie, data_ang
+from angajati
+where data_ang not in (select distinct(data_ang)
+    						from angajati
+    						where to_char(data_ang, 'MON') in ('DEC', 'JAN', 'FEB'))
+order by nume;
+
+-- Ex. 4. Să se selecteze angajații care au salariile in lista de salarii maxime pe departament.
+select den_dep, nume, salariu
+from angajati
+	natural join departamente
+where salariu in (select max(salariu)
+    			from angajati
+    			group by id_dep)
+order by den_dep;
+
+
+-- Subcereri necorelate care întorc o linie în clauza WHERE
+-- Ex. 5. Să se selecteze angajații care au venit în același an și au aceeași funcție cu angajatul care are numele JONES.
+select id_dep, nume, functie, data_ang
+from angajati
+where
+	(to_char(data_ang, 'YYYY'), functie) in
+	(select to_char(data_ang, 'YYYY'), functie
+    from angajati
+    where lower(nume) = 'jones');
+
+
+-- Subcereri necorelate care întorc mai multe linii în clauza WHERE
+-- Ex. 6. Să se afișeze angajatii care au venitul lunar minim pe fiecare departament.
+select id_dep, nume, salariu
+from angajati
+where (id_dep, salariu + nvl(comision, 0)) in
+		(select id_dep, min(salariu + nvl(comision, 0))
+    		from angajati
+    		group by id_dep)
+order by id_dep;
+
+-- Ex. 7. Să se afișeze angajații care au salariul mai mare decât salariul maxim din departamentul SALES. Acesta este un exemplu de subcereri imbricate (in total 3 nivele), subcererile insa NU intorc mai multe linii in final, ci o singura valoare.
+select nume, functie, data_ang, salariu
+from angajati
+where salariu > (select max(salariu)
+    				from angajati
+    				where id_dep = 
+    						(select id_dep
+    							from departamente
+    							where lower(den_dep) = 'sales'));
+
+-- Subcereri corelate în clauze WHERE
+-- Ex. 8. Să se afișeze angajații care au salariul peste valoarea medie a departamentului din care fac parte.
+select a.id_dep, a.nume, a.functie, a.salariu
+from angajati a
+where a.salariu > (select avg(b.salariu)
+    				from angajati b
+    				where b.id_dep = a.id_dep)
+order by a.id_dep;
+
+-- Ex. 9. Să se mărească salariile angajaților cu 10% din salariul mediu și să se acorde tuturor angajaților un comision egal cu comisionul mediu pe departamentul din care face parte angajatul, numai pentru persoanele angajate înainte de 1-JUN-1981.
+update angajati a
+set (a.salariu, a.comision) = 
+	(select a.salariu + avg(b.salariu) * 0.1, avg(b.comision)
+    	from angajati b
+    	where b.id_dep = a.id_dep)
+where data_ang <= '1-JUN-81';
+
+--Subcereri pe tabelă temporară (în clauza FROM)
+-- Ex. 10. Să se afle salariul maxim pentru fiecare departament.
+select b.id_dep, a.den_dep, b.max_sal_dep
+from
+	departamente a,
+	(select id_dep, max(salariu) max_sal_dep
+    from angajati
+    group by id_dep) b
+where a.id_dep = b.id_dep
+order by b.id_dep;
+
+select b.id_dep, a.den_dep, b.max_sal_dep
+from
+	departamente a inner join
+		(select id_Dep, max(salariu) max_sal_dep
+    	from angajati
+    	group by id_dep) b
+	on a.id_dep = b.id_dep
+order by b.id_dep;
+
+
+-- ex individual
+-- Să se selecteze numele angajatului, numele departamentului si salariul pentru angajatii care au salariul egal cu salariul minim din departamentul in care lucreaza. Ordonati dupa nume.
+--Rezolvati prin 4 metode:
+--o metoda care sa foloseasca o subcerere care intoarce o valoare
+--o metoda care sa foloseasca o subcerere care intoarce o linie cu mai multe coloane
+--o metoda care sa foloseasca o subcerere care intoarce mai multe linii cu mai multe coloane
+--o metoda care sa foloseasca o subcerere in clauza from
+
+
+-- o valoare
+select a.nume, d.den_dep, a.salariu
+from angajati a, departamente d
+where a.id_dep = d.id_dep and a.salariu = (select min(salariu)
+    								from angajati b
+    								where b.id_dep = a.id_dep);
+-- o linie cu mai multe col
+select a.nume, d.den_dep, a.salariu
+from angajati a, departamente d
+where a.id_dep = d.id_dep and
+    (a.salariu, a.id_dep) in
+    	(select min(b.salariu), b.id_dep
+    		from angajati b
+    		-- asa aleg doar o linie
+    		where b.id_dep = a.id_dep
+    		group by b.id_dep);
+
+-- mai multe linii cu mai multe col
+select a.nume, d.den_dep, a.salariu
+from angajati a, departamente d
+where a.id_dep = d.id_dep and
+    (a.salariu, a.id_dep) in
+    	(select min(b.salariu), b.id_dep
+    		from angajati b
+    		group by b.id_dep);
+
+-- in clauza from
+select a.nume, d.den_dep, a.salariu
+from angajati a, departamente d, (select min(salariu) as min_salariu, id_dep
+    						from angajati
+    						group by id_dep) b
+where a.id_dep  = d.id_dep and a.salariu = b.min_salariu;
+
+
+--LABORATOR 9
+---- Subcereri pe clauza HAVING
+-- 1. Să se determine care departament are cei mai mulți angajați pe aceeași funcție.
+-- met1
+select d.den_dep,
+	a.functie,
+	count(a.id_ang) nr_ang
+from angajati a
+	natural join departamente d
+group by d.den_dep, a.functie
+having count(id_ang) in (select max(count(id_ang))
+    					from angajati
+    					group by id_dep, functie);
+
+-- met 2
+-- pas1
+select max((select (count(id_ang))
+    	from angajati
+    	where id_dep = s.id_dep and functie = s.functie
+    	group by id_dep, functie)) max_count
+from angajati s;
+
+--pas2
+select d.den_dep, a.functie, count(a.id_ang) nr_ang
+from angajati a
+	natural join departamente d
+group by d.den_dep, a.functie
+having count(a.id_ang) = (select max((select (count(id_ang))
+    						from angajati
+    						where id_dep = s.id_dep and
+    							functie = s.functie
+    						group by id_dep, functie)) max_count
+							from angajati s);
+
+
+-- 2:  Să se determine angajații care au comisionul maxim 
+-- pentru un departament introdus de la tastatură.
+select d.den_dep,
+	a.nume,
+	a.functie,
+	a.comision
+from angajati a
+	inner joi departamente d
+	on a.id_dep = d.id_dep
+group by d.den_dep,
+	a.nume,
+	a.functie,
+	a.comision
+having max(a.comision) in (select max(comision)
+    						from angajati
+    						where id_dep = 30
+    						group by id_dep)
+order by 2;
+
+-- 3 Să se afle ce angajat are salariul maxim în firmă
+select a.nume,
+	a.functie,
+	a.data_ang,
+	a.salariu
+from angajati a,
+	(select id_dep,
+    max(salariu) sal_max_dep
+    from angajati
+    group by id_dep) b
+group by a.nume,
+	a.functie,
+	a.data_ang,
+	a.salariu
+having a.salariu = max(b.sal_max_dep)
+order by a.nume;
+
+
+----- Subcereri pe clauza SELECT
+-- 4 Să se afișeze șefii angajaților din departamentul 20.
+select nume nume_ang,
+	(select nume
+    from angajati
+    where id_ang = a.id_sef) nume_sef
+from angajati a
+where id_dep = 20
+order by nume;
+
+---- Subcereri pe clauza ORDER BY
+-- 5. Să se facă o listă cu angajații din departamentele 10 și 20, ordonați
+-- descrescător după numărul de angajați din fiecare departament.
+select id_dep, nume, functie
+from angajati a
+where id_dep in (10, 20)
+order by (select count(*)
+    	from angajati b
+    	where a.id_dep = b.id_dep) desc;
+
+
+---- Operatori în subcereri
+--6. Să se afle care sunt angajații care au salariul mai mare
+-- decât salariul cel mai mic pentru funcția de SALESMAN.
+select id_dep,
+	nume,
+    functie,
+    salariu
+from angajati
+where salariu > some(select distinct salariu
+    				from angajati
+    				where functie = 'SALESMAN')
+order by id_dep, nume;
+
+-- 7.  Să se afle care sunt angajații care au salariul mai mare decât
+-- salariul cel mai mare pentru funcția de SALESMAN.
+select id_dep,
+	nume,
+	functie,
+	salariu
+from angajati
+where salariu >= ALL(select distinct salariu
+    			from angajati
+    			where functie = 'SALESMAN')
+order by id_dep, nume;
+
+-- exists/not exists
+-- 8. Să se determine departamentele care au cel puțin un angajat.
+select d.id_dep,
+	d.den_dep
+from departamente d
+where exists(select nume
+    		from angajati
+    		where id_dep = d.id_dep)
+order by id_dep;
+
+-- Să se determine care angajați nu au șef.
+-- cu not exists:
+select id_dep,
+	id_ang,
+	nume,
+    functie,
+    id_sef
+from angajati a
+where not exists(select id_sef
+    			from angajati b
+    			where a.id_sef = id_ang)
+order by id_dep;
+
+-- cu not in:
+select id_dep,
+	id_ang,
+	nume,
+    functie,
+    id_sef
+from angajati a
+where id_sef not in (select disitnct id_sef
+    				from angajati)
+order by id_dep;
+
+
+
+-- exercitii individuale:
+-- 1. Să se calculeze și afișeze funcția și venitul mediu 
+-- lunar pentru fiecare 
+-- funcție. Să se folosească o subcerere în clauza select.
+-- exercitii individuale:
+-- 1. Să se calculeze și afișeze funcția și venitul mediu 
+-- lunar pentru fiecare 
+-- funcție. Să se folosească o subcerere în clauza select.
+-- cu select:
+select a.functie, 
+    (select avg(salariu + nvl(comision, 0))
+    	from angajati
+    	where a.functie = functie) venit_lunar
+from angajati a
+group by functie;
+
+-- cu having:
+select a.functie,
+    avg(a.salariu + nvl(a.comision, 0)) as venit_lunar
+from angajati a
+group by a.functie
+having avg(a.salariu + nvl(a.comision, 0)) = (select avg(salariu + nvl(comision, 0))
+    											from angajati
+    											where a.functie = functie);
+
+
+
+-- 2. Să se facă o listă cu funcție, gradul salarial, salariul
+-- mediu angajați calculat după funcție și grad unde salariul
+-- mediu angajați este mai mare sau egal cu salariu mediu
+-- pentru grad.
+select a.functie functie_angajat,
+	g.grad grad_salariu,
+	avg(a.salariu) salariu_mediu
+from angajati a
+	join grila_salariu g on a.salariu between g.nivel_inf and g.nivel_sup 
+group by functie, grad
+having avg(a.salariu) >= (select avg(a2.salariu)
+    					from angajati a2
+    						join grila_salariu g2 on a2.salariu between g2.nivel_inf and g2.nivel_sup
+						where g.grad = g2.grad);
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- TEST
+-- sa se afiseze gradul salarial in care sunt inclusi cei mai multi angajati 
+-- din departamentul sales
+-- se va afisa nr gradului si nr de anjajati
+
+select g.grad,
+	count(a.id_ang) nr_angajati
+from angajati a
+	join grila_salariu g on a.salariu between g.nivel_inf and g.nivel_sup
+	join departamente d on a.id_dep = d.id_dep
+where d.den_dep = 'SALES'
+group by grad
+having count(a.id_ang) = (select max(count(a2.id_ang))
+    						from angajati a2
+    						join grila_salariu g2 on a2.salariu between g2.nivel_inf and g2.nivel_sup
+							join departamente d2 on d2.id_dep = a2.id_dep
+						where d2.den_dep = 'SALES'
+                        group by grad);
+
+
+
+
+
+
+
+-- Cerere sql care face o lista cu angajatii care au venit lunar
+-- mai mare decat venitul mediu pe departamentul din care fac parte.
+-- Lista va contine:
+-- - numai angajatii din departamentele care au cel putin 4 angajati, 
+-- ord descrescator dupa nr de angajati din departamente
+
+-- - Nr ang din fiecare departament
+-- - Denumire departamente
+-- - Nume angajat
+-- - Venit lunar angajat
+-- - Venit mediu departament - Venitul mediu cu maxim 2 zecimale
+
+-- nr angajati din fiecare departament
+select
+    x.nr_ang as nr_ang_per_dep,
+    d.den_dep,
+    a.nume,
+    a.salariu + nvl(a.comision, 0) as venit_lunar,
+	trunc(y.ven_med_dep, 2) venit_med_dep
+from angajati a,
+    departamente d,
+    -- returneaza nr angajati pe departament
+    (select id_dep, 
+    	count(*) nr_ang
+    from angajati
+    group by id_dep
+    having count(*) > 4) x,
+
+    -- returnreaza venit mediu pe departament
+    (select id_dep,
+    	avg(salariu + nvl(comision, 0)) ven_med_dep
+    from angajati
+    group by id_dep) y
+
+where a.id_dep = d.id_dep and a.id_dep = x.id_dep and y.id_dep = a.id_dep
+    and a.salariu + nvl(a.comision, 0)  >= y.ven_med_dep
+order by 1 desc;
+
+
+
+
+
+
+
+

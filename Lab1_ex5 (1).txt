@@ -1,0 +1,100 @@
+create table book_types
+(
+    id_type NUMBER(8),
+    type VARCHAR2(30),
+    CONSTRAINT pk_book_types PRIMARY KEY (id_type)
+);
+
+-- ASA AFISEZ TABELA
+desc book_types;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'BOOK_TYPES';
+
+create table books
+(
+    id_book NUMBER(8),
+    id_type NUMBER(8),
+    id_publisher NUMBER(8),
+    title VARCHAR2(30),
+    no_pages NUMBER(4),
+    publishing_year NUMBER(4),
+    CONSTRAINT pk_books PRIMARY KEY (id_book)
+);
+
+-- ASA AFISEZ TABELA
+desc books;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'BOOKS';
+
+create table publishers
+(
+    id_publisher NUMBER(8),
+    name VARCHAR2(30),
+    CONSTRAINT pk_publishers PRIMARY KEY (id_publisher)
+);
+
+-- ASA AFISEZ TABELA
+desc publishers;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'PUBLISHERS';
+
+create table books_authors
+(
+    id_book NUMBER(8),
+    id_author NUMBER(8),
+    CONSTRAINT pk_books_authors PRIMARY KEY (id_book, id_author)
+);
+
+-- ASA AFISEZ TABELA
+desc books_authors;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'BOOKS_AUTHORS';
+
+create table authors
+(
+    id_authors NUMBER(8),
+    firstname VARCHAR2(30),
+    lastname VARCHAR2(30),
+    CONSTRAINT pk_authors PRIMARY KEY (id_authors)
+);
+
+-- ASA AFISEZ TABELA
+desc authors;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'AUTHORS';
+
+ALTER TABLE books ADD CONSTRAINT fk_books_books_types FOREIGN KEY (id_type) REFERENCES book_types (id_type);
+ALTER TABLE books ADD CONSTRAINT fk_books_publishers FOREIGN KEY (id_publisher) REFERENCES publishers (id_publisher);
+ALTER TABLE books_authors ADD CONSTRAINT fk_books_authors_books FOREIGN KEY (id_book) REFERENCES books (id_book);
+ALTER TABLE books_authors ADD CONSTRAINT fk_books_authors_authors FOREIGN KEY (id_author) REFERENCES authors (id_authors);
+
+INSERT INTO book_types(id_type, type)
+VALUES(12, 'comedie');
+
+INSERT INTO book_types(id_type, type)
+VALUES(7, 'istorie');
+
+INSERT INTO book_types(id_type, type)
+VALUES(9, 'crima');
+
+INSERT INTO publishers(id_publisher, name)
+VALUES(2, 'Narnia');
+
+INSERT INTO books(id_book, id_type, id_publisher, title, no_pages, publishing_year)
+VALUES(1001, 12, 2, 'Narnia', 69, 2023);
+
+INSERT INTO authors(id_authors, firstname, lastname)
+VALUES(245927, 'Ionel', 'Ionescu');
+
+INSERT INTO books_authors (id_book, id_author) VALUES 
+(1001, 245927);

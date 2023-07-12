@@ -1,0 +1,107 @@
+create table Flower_types
+(
+    id_type NUMBER(8),
+    type VARCHAR2(30),
+    CONSTRAINT pk_flower_types PRIMARY KEY (id_type)
+);
+
+-- ASA AFISEZ TABELA
+desc Flower_types;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'FLOWER_TYPES';
+
+create table Flowers
+(
+    id_flower NUMBER(8),
+    name VARCHAR2(30),
+    price NUMBER(8, 2),
+	color VARCHAR2(30),
+    quantity NUMBER(8),
+    id_type NUMBER(8),
+    CONSTRAINT pk_flowers PRIMARY KEY (id_flower)
+);
+
+-- ASA AFISEZ TABELA
+desc Flowers;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'FLOWERS';
+
+create table flowers_buquette
+(
+    id_buquette NUMBER(8),
+    id_flower NUMBER(8),
+    number_flower NUMBER(8),
+    CONSTRAINT pk_flowers_buquette PRIMARY KEY (id_buquette, id_flower)
+);
+
+-- ASA AFISEZ TABELA
+desc flowers_buquette;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'FLOWERS_BUQUETTE';
+
+Create table Buquettes
+(
+    id_buquette NUMBER(8),
+    name VARCHAR2(30),
+    id_type NUMBER(8),
+    CONSTRAINT pk_buguettes PRIMARY KEY (id_buquette)
+);
+
+-- ASA AFISEZ TABELA
+desc Buquettes;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'BUQUETTES';
+
+Create table Buquettes_types
+(
+    id_type NUMBER(8),
+    type VARCHAR2(30),
+    CONSTRAINT pk_buguettes_types PRIMARY KEY (id_type)
+);
+
+-- ASA AFISEZ TABELA
+desc Buquettes_types;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'BUQUETTES_TYPES';
+
+ALTER TABLE Flowers ADD CONSTRAINT fk_flowers_flower_type FOREIGN KEY (id_type) REFERENCES Flower_types (id_type);
+ALTER TABLE flowers_buquette ADD CONSTRAINT fk_flowers_buquette_buquettes FOREIGN KEY (id_buquette) REFERENCES Buquettes (id_buquette);
+ALTER TABLE flowers_buquette ADD CONSTRAINT fk_flowers_flower_flowers FOREIGN KEY (id_flower) REFERENCES Flowers (id_flower);
+ALTER TABLE Buquettes ADD CONSTRAINT fk_buquettes_buquette_types FOREIGN KEY (id_type) REFERENCES Buquettes_types (id_type);
+
+INSERT INTO flower_types (id_type, type)
+	VALUES (1, 'Flori de gradina');
+
+INSERT INTO flower_types (id_type, type)
+	VALUES (2, 'Flori de tinut in casa');
+
+INSERT INTO flower_types (type, id_type)
+	VALUES ('Flori carnivore', 3);
+
+INSERT INTO flower_types (id_type) VALUES (4);
+
+INSERT INTO flower_types VALUES (5, 'Alte flori');
+-- INSERT INTO flower_types VALUES ('Alte alte flori', 6); -- da eroare
+INSERT INTO flower_types VALUES (7, NULL);
+
+UPDATE flower_types SET type = 'Tip nou de flori' WHERE id_type = 7;
+
+INSERT INTO flowers (id_flower, name, price, color, quantity, id_type)
+	VALUES (1, 'lalea', 10, 'portocaliu', 3, 2);
+
+SELECT * from flowers;
+
+INSERT INTO flowers (id_flower, name, price, color, quantity)
+	VALUES (2, 'floare de colt', 10, 'portocaliu', 3);
+
+SELECT * FROM flower_types;

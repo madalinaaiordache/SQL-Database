@@ -1,0 +1,163 @@
+create table producers
+(
+    id_producer NUMBER(8),
+    name VARCHAR2(30),
+    CONSTRAINT pk_producer PRIMARY KEY (id_producer)
+);
+
+-- ASA AFISEZ TABELA
+desc producers;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'PRODUCERS';
+
+create table cars
+(
+ 	id_car NUMBER(8),
+    id_producer NUMBER(8),
+    id_type NUMBER(8),
+    registration_no VARCHAR2(20),
+    year NUMBER(8),
+    CONSTRAINT pk_car PRIMARY KEY (id_car),
+    CONSTRAINT fk_car_producer FOREIGN KEY (id_producer) REFERENCES producers(id_producer)
+);
+
+desc cars;
+
+create table car_types
+(
+ 	id_type NUMBER(8),
+    type VARCHAR2(20),
+    CONSTRAINT pk_type PRIMARY KEY (id_type)
+);
+
+desc car_types;
+
+-- dupa ce am creat car_types, pot sa adaug cheia straina id_type in tabela anterior creata cars
+ALTER TABLE cars ADD CONSTRAINT fk_cars_car_types FOREIGN KEY (id_type) REFERENCES car_types (id_type);
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'CARS';
+
+
+-- valori din tabel -> modificate cu update
+-- modificare structura tabel -> alter
+
+create table car_drivers
+(
+ 	id_driver NUMBER(8),
+    id_car NUMBER(8),
+    datee DATE DEFAULT SYSDATE,
+    CONSTRAINT pk_car_drivers PRIMARY KEY (id_driver, id_car)
+);
+
+desc car_drivers;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'CAR_DRIVERS';
+
+create table drivers
+(
+ 	id_driver NUMBER(8),
+    name NUMBER(8),
+    age NUMBER(3),
+    CONSTRAINT pk_drivers PRIMARY KEY (id_driver)
+);
+
+desc drivers;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'DRIVERS';
+
+create table licenses_drivers
+(
+    id_driver NUMBER(8),
+    id_license NUMBER(8),
+    year number(8),
+    CONSTRAINT pk_licenses_drivers PRIMARY KEY (id_driver, id_license)
+);
+
+desc licenses_drivers;
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'LICENSES_DRIVERS';
+
+create table licenses
+(
+    id_license NUMBER(8),
+    type VARCHAR(20),
+    CONSTRAINT pk_license PRIMARY KEY (id_license)
+);
+
+desc licenses;
+
+-- dupa ce am creat car_types, pot sa adaug cheia straina id_type in tabela anterior creata cars
+ALTER TABLE car_drivers ADD CONSTRAINT fk_cars FOREIGN KEY (id_car) REFERENCES cars (id_car);
+ALTER TABLE car_drivers ADD CONSTRAINT fk_drivers FOREIGN KEY (id_driver) REFERENCES drivers (ID_DRIVER);
+select constraint_name from all_constraints
+	where table_name = 'CAR_DRIVERS';
+
+ALTER TABLE licenses_drivers ADD CONSTRAINT fk_driversS FOREIGN KEY (id_driver) REFERENCES drivers (id_driver);
+select constraint_name from all_constraints
+	where table_name = 'LICENSES_DRIVERS';
+
+desc producers;
+select constraint_name from all_constraints
+	where table_name = 'PRODUCERS';
+desc cars;
+select constraint_name from all_constraints
+	where table_name = 'CARS';
+desc car_types;
+select constraint_name from all_constraints
+	where table_name = 'CARS_TYPES';
+desc car_drivers;
+select constraint_name from all_constraints
+	where table_name = 'CAR_DRIVERS';
+desc drivers;
+select constraint_name from all_constraints
+	where table_name = 'DRIVERS';
+desc licenses_drivers;
+select constraint_name from all_constraints
+	where table_name = 'LICENSES_DRIVERS';
+desc licenses;
+
+
+---- introducere date in tabela
+INSERT INTO producers (id_producer, name)
+	VALUES (1, 'MERCEDES');
+INSERT INTO producers (id_producer, name)
+	VALUES (2, 'AUDI');
+SELECT * from producers;
+
+UPDATE producers SET name = 'mercedes'
+	where name ='MERCEDES';
+
+INSERT INTO cars
+	(id_car, id_producer)
+	VALUES
+	(1, 2); -- daca puneam id_producer = 100, nu puteam pt ca nu exista in tabela producers
+SELECT * FROM cars;
+
+INSERT INTO cars (id_car) VALUES (100);
+INSERT INTO producers VALUES (100, 'Dacia');
+
+
+
+
+
+
+
+
+------------------- sfarsit ex3
+
+--- select id_ang, functie from angajati where functie = &functie
+
+
+---select nume, id_dep, &&formula as salariu_anual from angajati where id_dep = &dep AND &formula > &venitmediu;
+
+define -- ca sa vedem variabilele salvate
+undefine formula -- sterg

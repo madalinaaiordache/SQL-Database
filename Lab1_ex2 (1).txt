@@ -1,0 +1,72 @@
+create table recipes
+(
+    id_recipe NUMBER(8),
+    title VARCHAR2(30),
+    instructions VARCHAR2(30),
+    CONSTRAINT pk_recipes PRIMARY KEY (id_recipe)
+);
+
+-- ASA AFISEZ TABELA
+desc recipes;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'RECIPES';
+
+create table ingredients
+(
+    id_ingredient NUMBER(8),
+    id_category NUMBER(8),
+    ingredient VARCHAR2(30),
+    CONSTRAINT pk_ingredients PRIMARY KEY (id_ingredient)
+);
+
+-- ASA AFISEZ TABELA
+desc ingredients;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'INGREDIENTS';
+
+create table link
+(
+    id_recipe NUMBER(8),
+    id_ingredient NUMBER(8),
+    quantity NUMBER(8),
+    mu VARCHAR2(30),
+    CONSTRAINT pk_link PRIMARY KEY (id_recipe, id_ingredient)
+);
+
+-- ASA AFISEZ TABELA
+desc link;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'LINK';
+
+create table categories
+(
+    id_category NUMBER(8),
+    category VARCHAR2(30),
+    CONSTRAINT pk_categories PRIMARY KEY (id_category)
+);
+
+-- ASA AFISEZ TABELA
+desc categories;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'CATEGORIES';
+
+ALTER TABLE ingredients ADD CONSTRAINT fk_ingredients_categories FOREIGN KEY (id_category) REFERENCES categories (id_category);
+ALTER TABLE link ADD CONSTRAINT fk_link_recipes FOREIGN KEY (id_recipe) REFERENCES recipes (id_recipe);
+ALTER TABLE link ADD CONSTRAINT fk_link_ingredients FOREIGN KEY (id_ingredient) REFERENCES ingredients (id_ingredient);
+
+INSERT INTO categories (id_category, category) VALUES(100, 'fainoase'); 
+INSERT INTO ingredients (id_ingredient, id_category, ingredient)
+ VALUES(128, 100, 'faina'); 
+
+INSERT INTO recipes (id_recipe, title, instructions)
+VALUES (1, 'Tiramisu', 'Reteta tiramisu');
+
+INSERT INTO link VALUES (1, 128, 2, 'reteta');

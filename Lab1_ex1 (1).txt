@@ -1,0 +1,87 @@
+create table comments
+(
+    id NUMBER(8),
+    article_comment VARCHAR2(30),
+    idarticle NUMBER(8),
+    iduser NUMBER(8),
+    CONSTRAINT pk_comments PRIMARY KEY (id)
+);
+
+-- ASA AFISEZ TABELA
+desc comments;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'COMMENTS';
+
+create table users
+(
+    id NUMBER(8),
+    username VARCHAR2(30),
+    password VARCHAR2(30),
+    CONSTRAINT pk_users PRIMARY KEY (id)
+);
+
+-- ASA AFISEZ TABELA
+desc users;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'USERS';
+
+create table tags
+(
+    id NUMBER(8),
+    tagname VARCHAR2(30),
+    CONSTRAINT pk_tags PRIMARY KEY (id)
+);
+
+-- ASA AFISEZ TABELA
+desc tags;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'TAGS';
+
+create table articles
+(
+    id NUMBER(8),
+    iduser NUMBER(8),
+    title VARCHAR2(30),
+    content VARCHAR2(30),
+    CONSTRAINT pk_articles PRIMARY KEY (id)
+);
+
+-- ASA AFISEZ TABELA
+desc articles;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'ARTICLES';
+
+create table tags_articles
+(
+    idarticle NUMBER(8),
+    idtag NUMBER(8),
+    CONSTRAINT pk_tags_articles PRIMARY KEY (idarticle, idtag)
+);
+
+-- ASA AFISEZ TABELA
+desc tags_articles;
+
+-- ASA AFISEZ CHEILE PRIMARE
+select constraint_name from all_constraints
+	where table_name = 'TAGS_ARTICLES';
+
+ALTER TABLE comments ADD CONSTRAINT fk_comments_users FOREIGN KEY (iduser) REFERENCES users (id);
+ALTER TABLE comments ADD CONSTRAINT fk_comments_articles FOREIGN KEY (idarticle) REFERENCES articles (id);
+ALTER TABLE articles ADD CONSTRAINT fk_articles_users FOREIGN KEY (iduser) REFERENCES users (id);
+ALTER TABLE tags_articles ADD CONSTRAINT fk_tags_articles_articles FOREIGN KEY (idarticle) REFERENCES articles (id);
+ALTER TABLE tags_articles ADD CONSTRAINT fk_tags_articles_tags FOREIGN KEY (idtag) REFERENCES tags (id);
+
+insert into users (id, username, password)
+	values (1, 'ana', 'mere');
+insert into comments (id, article_comment)
+	values (1, 'lalala');
+
+select * from users;
